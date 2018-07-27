@@ -15,4 +15,4 @@ editor
 
 4. Used the Maven Shade plugin to bundle the app into a single executable JAR
 
-5. 
+5. I have kept the currency as a String and not a Currency object because I would have had to write a custom JOOQ converter

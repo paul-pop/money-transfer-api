@@ -215,6 +215,9 @@ definitions:
       status:
         type: string
         description: Status of the transfer
+      timestamp:
+        type: string
+        description: Time when the transfer was initiated
   ArrayOfTransfers:
     type: array
     items:
