@@ -16,6 +16,7 @@ import ratpack.test.http.TestHttpClient;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.List;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
@@ -38,7 +39,7 @@ public class AccountHandlersTest {
         account = Account.builder()
             .name("Current Account")
             .balance(BigDecimal.valueOf(0))
-            .currency("GBP")
+            .currency(Currency.getInstance("GBP"))
             .build();
     }
 
@@ -85,7 +86,7 @@ public class AccountHandlersTest {
                 .text(objectMapper.writeValueAsString(Account.builder()
                     .name("")
                     .balance(BigDecimal.valueOf(1))
-                    .currency("GBP")
+                    .currency(Currency.getInstance("GBP"))
                     .build())))
             .post());
 
@@ -99,7 +100,7 @@ public class AccountHandlersTest {
                 .type(MediaType.APPLICATION_JSON)
                 .text(objectMapper.writeValueAsString(Account.builder()
                     .balance(BigDecimal.valueOf(-1))
-                    .currency("GBP")
+                    .currency(Currency.getInstance("GBP"))
                     .build())))
             .post());
 

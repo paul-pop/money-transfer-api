@@ -208,12 +208,18 @@ definitions:
       reference:
         type: string
         description: Transfer reference
-      status:
-        type: string
-        description: Status of the transfer
       timestamp:
         type: string
         description: Time when the transfer was initiated
+      status:
+        type: object
+        properties:
+          state:
+            type: string
+            description: State of the transfer
+          reason:
+            type: string
+            description: Reason of the said state if failed
   ArrayOfTransfers:
     type: array
     items:

@@ -16,10 +16,8 @@
         <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
         <maven.shade.plugin.version>3.1.1</maven.shade.plugin.version>
 
-        <h2.db.version>1.4.197</h2.db.version>
         <hibernate.validator.version>5.3.6.Final</hibernate.validator.version>
         <javax.el.version>3.0.1-b10</javax.el.version>
-        <jooq.version>3.11.3</jooq.version>
         <junit.version>4.12</junit.version>
         <lombok.version>1.16.22</lombok.version>
         <ratpack.version>1.5.4</ratpack.version>
@@ -36,20 +34,8 @@
 
         <dependency>
             <groupId>io.ratpack</groupId>
-            <artifactId>ratpack-hikari</artifactId>
+            <artifactId>ratpack-guice</artifactId>
             <version>${ratpack.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${h2.db.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq</artifactId>
-            <version>${jooq.version}</version>
         </dependency>
 
         <dependency>
@@ -122,37 +108,6 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jooq</groupId>
-                <artifactId>jooq-codegen-maven</artifactId>
-                <version>${jooq.version}</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <jdbc>
-                                <driver>org.h2.Driver</driver>
-                                <url>jdbc:h2:mem:transfers;INIT=RUNSCRIPT FROM
-                                    '${project.basedir}/src/main/resources/tables.sql'
-                                </url>
-                            </jdbc>
-                            <generator>
-                                <database>
-                                    <inputSchema>PUBLIC</inputSchema>
-                                </database>
-                                <target>
-                                    <packageName>jooq</packageName>
-                                    <directory>target/generated-sources</directory>
-                                </target>
-                            </generator>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

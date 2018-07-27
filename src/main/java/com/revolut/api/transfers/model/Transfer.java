@@ -15,6 +15,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Currency;
 
 @Getter
 @Setter
@@ -35,8 +36,8 @@ public class Transfer {
     @Min(0)
     private final BigDecimal amount;
 
-    @NotBlank
-    private final String currency;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private final Currency currency;
 
     @NotBlank
     private final String reference;
@@ -44,7 +45,7 @@ public class Transfer {
     @JsonSerialize(using = ToStringSerializer.class)
     private final LocalDateTime timestamp;
 
-    // This will change so can't be immutable
+    // These will change so can't be immutable
     private TransferStatus status;
 
     @JsonCreator
@@ -52,7 +53,7 @@ public class Transfer {
                     @JsonProperty("sourceAccountId") final Long sourceAccountId,
                     @JsonProperty("destinationAccountId") final Long destinationAccountId,
                     @JsonProperty("amount") final BigDecimal amount,
-                    @JsonProperty("currency") final String currency,
+                    @JsonProperty("currency") final Currency currency,
                     @JsonProperty("reference") final String reference,
                     @JsonProperty("timestamp") final LocalDateTime timestamp,
                     @JsonProperty("status") final TransferStatus status) {
@@ -63,7 +64,7 @@ public class Transfer {
         this.amount = amount;
         this.currency = currency;
         this.reference = reference;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = timestamp;
         this.status = status;
     }
 }

@@ -5,11 +5,9 @@ REST API used to transfer a given amount of money between two accounts (only sup
 ## Summary
 
 Written in Java 8 and [Ratpack](https://ratpack.io) with:
-- HikariCP for JDBC connection pool
-- H2 as in-memory database
-- JOOQ to generate classes for database operations
 - Lombok for awesomeness
 - Uses JUnit and Ratpack Test for testing
+- Uses basic in-memory data structures for persistence
 
 ## Build
 

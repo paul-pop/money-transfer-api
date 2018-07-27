@@ -1,45 +1,55 @@
 package com.revolut.api.transfers.repository;
 
 import com.revolut.api.transfers.model.Transfer;
-import jooq.tables.records.TransferRecord;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.SelectJoinStep;
-import org.jooq.impl.DSL;
 import ratpack.exec.Blocking;
 import ratpack.exec.Promise;
 
-import javax.sql.DataSource;
 import java.util.List;
-
-import static jooq.tables.Transfer.TRANSFER;
-import static org.jooq.SQLDialect.H2;
+import java.util.Optional;
 
 /**
  * Holds methods for querying/mutating the transfer repository
  */
 public class TransferRepository {
 
-    private final DSLContext ctx;
+    private final List<Transfer> transfers;
 
-    public TransferRepository(final DataSource ds) {
-        this.ctx = DSL.using(ds, H2);
+    public TransferRepository(final List<Transfer> transfers) {
+        this.transfers = transfers;
     }
 
+    /**
+     * Retrieve a list of all {@link Transfer}s
+     *
+     * @return promise with the list of all transfers
+     */
     public Promise<List<Transfer>> getAll() {
-        SelectJoinStep<Record> selected = ctx.select().from(TRANSFER);
-        return Blocking.get(() -> selected.fetchInto(Transfer.class));
+        return Blocking.get(() -> transfers);
     }
 
+    /**
+     * Retrieve an {@link Transfer} by id
+     *
+     * @param id the identifier to query by
+     * @return promise with the transfer
+     */
     public Promise<Transfer> getById(final Long id) {
-        Record record = ctx.select().from(TRANSFER).where(TRANSFER.ID.equal(id)).fetchOne();
-        return record == null ? Blocking.get(() -> null) : Blocking.get(() -> record.into(Transfer.class));
+        Optional<Transfer> first = transfers.stream()
+            .filter(transfer -> id.equals(transfer.getId()))
+            .findFirst();
+
+        return first.isPresent() ? Blocking.get(first::get) : Blocking.get(() -> null);
     }
 
+    /**
+     * Create a new {@link Transfer}
+     *
+     * @param transfer the data to create with
+     * @return promise with the transfer
+     */
     public Promise<Transfer> create(final Transfer transfer) {
-        TransferRecord transferRecord = ctx.newRecord(TRANSFER, transfer);
-        return Blocking.op(transferRecord::store)
-            .next(Blocking.op(transferRecord::refresh))
-            .map(() -> transferRecord.into(Transfer.class));
+        return Blocking
+            .op(() -> transfers.add(transfer))
+            .map(() -> transfer);
     }
 }

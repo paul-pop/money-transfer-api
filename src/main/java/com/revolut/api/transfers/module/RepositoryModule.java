@@ -6,7 +6,7 @@ import com.google.inject.Singleton;
 import com.revolut.api.transfers.repository.AccountRepository;
 import com.revolut.api.transfers.repository.TransferRepository;
 
-import javax.sql.DataSource;
+import java.util.ArrayList;
 
 /**
  * Guice module used to register the {@link AccountRepository} and {@link TransferRepository} as singletons
@@ -20,13 +20,13 @@ public class RepositoryModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public AccountRepository accountRepository(DataSource ds) {
-        return new AccountRepository(ds);
+    public AccountRepository accountRepository() {
+        return new AccountRepository(new ArrayList<>());
     }
 
     @Provides
     @Singleton
-    public TransferRepository transferRepository(DataSource ds) {
-        return new TransferRepository(ds);
+    public TransferRepository transferRepository() {
+        return new TransferRepository(new ArrayList<>());
     }
 }

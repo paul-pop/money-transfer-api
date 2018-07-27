@@ -1,18 +1,28 @@
 package com.revolut.api.transfers.model;
 
-/**
- * Enum describing the status of the transfer:
- *
- * <ul>
- * <li>PROCESSING - This means the transfer started and it's in progress</li>
- * <li>COMPLETED - This means the transfer has completed successfully</li>
- * <li>FAILED - This means the transfer has failed to complete</li>
- * </ul>
- */
-public enum TransferStatus {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-    PROCESSING,
-    COMPLETED,
-    FAILED
+@Getter
+@Setter
+@EqualsAndHashCode
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class TransferStatus {
+
+    private final TransferState state;
+    private final String reason;
+
+    @JsonCreator
+    public TransferStatus(@JsonProperty("state") final TransferState state,
+                          @JsonProperty("reason") final String reason) {
+        this.state = state;
+        this.reason = reason;
+    }
 
 }
