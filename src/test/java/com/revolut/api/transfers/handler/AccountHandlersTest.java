@@ -36,11 +36,7 @@ public class AccountHandlersTest {
 
     @Before
     public void setUp() {
-        account = Account.builder()
-            .name("Current Account")
-            .balance(BigDecimal.valueOf(0))
-            .currency(Currency.getInstance("GBP"))
-            .build();
+        account = new Account("Current account", BigDecimal.valueOf(0), Currency.getInstance("GBP"));
     }
 
     @After
@@ -83,11 +79,9 @@ public class AccountHandlersTest {
         ReceivedResponse response = testHttpClient.request(PATH, request -> request
             .body(body -> body
                 .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(Account.builder()
-                    .name("")
-                    .balance(BigDecimal.valueOf(1))
-                    .currency(Currency.getInstance("GBP"))
-                    .build())))
+                .text(objectMapper.writeValueAsString(
+                    new Account("", BigDecimal.valueOf(1), Currency.getInstance("GBP"))
+                )))
             .post());
 
         assertThat(response.getStatusCode(), equalTo(BAD_REQUEST.code()));
@@ -98,10 +92,9 @@ public class AccountHandlersTest {
         ReceivedResponse response = testHttpClient.request(PATH, request -> request
             .body(body -> body
                 .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(Account.builder()
-                    .balance(BigDecimal.valueOf(-1))
-                    .currency(Currency.getInstance("GBP"))
-                    .build())))
+                .text(objectMapper.writeValueAsString(
+                    new Account("Current account", BigDecimal.valueOf(-1), Currency.getInstance("GBP"))
+                )))
             .post());
 
         assertThat(response.getStatusCode(), equalTo(BAD_REQUEST.code()));
@@ -112,10 +105,9 @@ public class AccountHandlersTest {
         ReceivedResponse response = testHttpClient.request(PATH, request -> request
             .body(body -> body
                 .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(Account.builder()
-                    .name("Current Account")
-                    .balance(BigDecimal.valueOf(1))
-                    .build())))
+                .text(objectMapper.writeValueAsString(
+                    new Account("Current account", BigDecimal.valueOf(1), null)
+                )))
             .post());
 
         assertThat(response.getStatusCode(), equalTo(BAD_REQUEST.code()));

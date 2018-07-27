@@ -1,70 +1,63 @@
 package com.revolut.api.transfers.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Currency;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Getter
 @Setter
 @EqualsAndHashCode
-@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Transfer {
 
-    private final Long id;
+    private static final AtomicLong COUNTER = new AtomicLong();
 
-    @NotNull
-    private final Long sourceAccountId;
+    private long id;
 
-    @NotNull
-    private final Long destinationAccountId;
+    private long sourceAccountId;
+
+    private long destinationAccountId;
 
     @NotNull
     @Min(0)
-    private final BigDecimal amount;
+    private BigDecimal amount;
 
+    @NotNull
     @JsonSerialize(using = ToStringSerializer.class)
-    private final Currency currency;
+    private Currency currency;
 
     @NotBlank
-    private final String reference;
+    private String reference;
 
     @JsonSerialize(using = ToStringSerializer.class)
-    private final LocalDateTime timestamp;
+    private LocalDateTime timestamp;
 
-    // These will change so can't be immutable
     private TransferStatus status;
 
-    @JsonCreator
-    public Transfer(@JsonProperty("id") final Long id,
-                    @JsonProperty("sourceAccountId") final Long sourceAccountId,
-                    @JsonProperty("destinationAccountId") final Long destinationAccountId,
+    public Transfer(@JsonProperty("sourceAccountId") final long sourceAccountId,
+                    @JsonProperty("destinationAccountId") final long destinationAccountId,
                     @JsonProperty("amount") final BigDecimal amount,
                     @JsonProperty("currency") final Currency currency,
-                    @JsonProperty("reference") final String reference,
-                    @JsonProperty("timestamp") final LocalDateTime timestamp,
-                    @JsonProperty("status") final TransferStatus status) {
+                    @JsonProperty("reference") final String reference) {
 
-        this.id = id;
+        this.id = COUNTER.incrementAndGet();
         this.sourceAccountId = sourceAccountId;
         this.destinationAccountId = destinationAccountId;
         this.amount = amount;
         this.currency = currency;
         this.reference = reference;
-        this.timestamp = timestamp;
-        this.status = status;
+        this.timestamp = LocalDateTime.now();
     }
 }

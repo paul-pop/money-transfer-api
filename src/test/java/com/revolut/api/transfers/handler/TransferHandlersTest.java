@@ -29,27 +29,16 @@ public class TransferHandlersTest {
 
     @Before
     public void setUp() {
-        sourceAccount = Account.builder()
-            .id(1L)
-            .name("Current Account")
-            .balance(BigDecimal.valueOf(10))
-            .currency(Currency.getInstance("GBP"))
-            .build();
+        sourceAccount = new Account("Current account", BigDecimal.valueOf(10), Currency.getInstance("GBP"));
 
-        destinationAccount = Account.builder()
-            .id(2L)
-            .name("Savings Account")
-            .balance(BigDecimal.valueOf(100))
-            .currency(Currency.getInstance("GBP"))
-            .build();
+        destinationAccount = new Account("Savings account", BigDecimal.valueOf(100), Currency.getInstance("GBP"));
 
-        transfer = Transfer.builder()
-            .sourceAccountId(sourceAccount.getId())
-            .destinationAccountId(destinationAccount.getId())
-            .amount(BigDecimal.valueOf(9.99))
-            .currency(Currency.getInstance("GBP"))
-            .reference("<3")
-            .build();
+        transfer = new Transfer(
+            sourceAccount.getId(),
+            destinationAccount.getId(),
+            BigDecimal.valueOf(9.99),
+            Currency.getInstance("GBP"),
+            "<3");
     }
 
     @After
