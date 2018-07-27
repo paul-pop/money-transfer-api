@@ -1,6 +1,7 @@
 package com.revolut.api.transfers.handler;
 
 import com.revolut.api.transfers.repository.AccountRepository;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import ratpack.handling.Context;
 import ratpack.handling.InjectionHandler;
 import ratpack.jackson.Jackson;
@@ -20,11 +21,11 @@ public class AccountHandler extends InjectionHandler {
             ctx.byMethod(method -> method
                 .get(() ->
                     repository.getById(id)
-                        .onNull(() -> ctx.clientError(404))
+                        .onNull(() -> ctx.clientError(HttpResponseStatus.NOT_FOUND.code()))
                         .map(Jackson::json)
                         .then(ctx::render)));
         } catch (NumberFormatException ex) {
-            ctx.clientError(404);
+            ctx.clientError(HttpResponseStatus.NOT_FOUND.code());
         }
 
     }

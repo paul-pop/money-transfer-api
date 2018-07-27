@@ -17,6 +17,9 @@ editor
 
 5. I have kept the currency as a String and not a Currency object because I would have had to write a custom JOOQ converter
 
-6. Although not required, I added validation for requests via JSR-303, the compromise I made here is not
-to return a detailed message with what error was triggered - as there's extra work to be done to convert the
-set of ContraintViolations into a renderer JSON 
+6. Although not required, I added validation for requests via JSR-303, the compromise I made here is not to return a detailed 
+message about the error - as there's extra work for converting the set of ContraintViolations into JSON
+
+7. Testing - rather than going crazy and unit testing every single bit, this API needs more integration/functional tests as 
+there's a lot of Ratpack internal stuff going on. So I have used that to spin up the server and test the API. I have also 
+not tested all possible validations just so I don't waste too much time.

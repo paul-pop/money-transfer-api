@@ -1,11 +1,11 @@
 package com.revolut.api.transfers.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(value = {"id", "status", "timestamp"}, allowGetters = true)
 public class Transfer {
 
     private final Long id;
@@ -54,16 +54,16 @@ public class Transfer {
                     @JsonProperty("amount") final BigDecimal amount,
                     @JsonProperty("currency") final String currency,
                     @JsonProperty("reference") final String reference,
-                    @JsonProperty("status") final TransferStatus status,
-                    @JsonProperty("timestamp") final LocalDateTime timestamp) {
+                    @JsonProperty("timestamp") final LocalDateTime timestamp,
+                    @JsonProperty("status") final TransferStatus status) {
 
         this.id = id;
         this.sourceAccountId = sourceAccountId;
         this.destinationAccountId = destinationAccountId;
         this.amount = amount;
-        this.currency = "GBP";
+        this.currency = currency;
         this.reference = reference;
-        this.status = status;
         this.timestamp = LocalDateTime.now();
+        this.status = status;
     }
 }
