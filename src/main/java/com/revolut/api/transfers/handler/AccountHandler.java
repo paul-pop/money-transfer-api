@@ -17,7 +17,8 @@ public class AccountHandler extends InjectionHandler {
 
     public void handle(Context ctx, AccountRepository repository) throws Exception {
         try {
-            Long id = Long.parseLong(ctx.getPathTokens().get("id"));
+            long id = Long.parseLong(ctx.getPathTokens().get("id"));
+
             ctx.byMethod(method -> method
                 .get(() ->
                     repository.getById(id)

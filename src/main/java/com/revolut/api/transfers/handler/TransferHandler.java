@@ -17,7 +17,8 @@ public class TransferHandler extends InjectionHandler {
 
     public void handle(Context ctx, TransferRepository repository) throws Exception {
         try {
-            Long id = Long.parseLong(ctx.getPathTokens().get("id"));
+            long id = Long.parseLong(ctx.getPathTokens().get("id"));
+
             ctx.byMethod(method -> method
                 .get(() ->
                     repository.getById(id)
