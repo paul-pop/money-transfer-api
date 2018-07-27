@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 @JsonIgnoreProperties(value = {"id"}, allowGetters = true)
 public class Account {
 
-    @NotNull
     private final Long id;
 
     @NotBlank

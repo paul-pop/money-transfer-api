@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(value = {"id", "status", "timestamp"}, allowGetters = true)
 public class Transfer {
 
-    @NotNull
     private final Long id;
 
     @NotNull

@@ -61,8 +61,6 @@ paths:
             $ref: '#/definitions/Account'
         '400':
           description: Bad request
-          schema:
-            $ref: '#/definitions/BadRequestResponse'
         '500':
           description: Internal server error
   /accounts/{id}:
@@ -141,7 +139,7 @@ paths:
           schema:
             $ref: '#/definitions/Transfer'
         '400':
-          description: Bad requestBadRequestResponse
+          description: Bad request
         '500':
           description: Internal server error
   /transfers/{id}:
@@ -164,8 +162,6 @@ paths:
             $ref: '#/definitions/Transfer'
         '400':
           description: Bad request
-          schema:
-            $ref: '#/definitions/BadRequestResponse'
         '404':
           description: Transfer not found
         '500':
@@ -223,9 +219,3 @@ definitions:
     items:
       $ref: '#/definitions/Transfer'
     title: Transfer[]
-  BadRequestResponse:
-    type: object
-    properties:
-      message:
-        type: string
-        description: A message describing the exact error that occured

@@ -17,4 +17,6 @@ editor
 
 5. I have kept the currency as a String and not a Currency object because I would have had to write a custom JOOQ converter
 
-6. Although not required, I added validation for requests via JSR-303, couldn't leave it without validation :-o
+6. Although not required, I added validation for requests via JSR-303, the compromise I made here is not
+to return a detailed message with what error was triggered - as there's extra work to be done to convert the
+set of ContraintViolations into a renderer JSON 

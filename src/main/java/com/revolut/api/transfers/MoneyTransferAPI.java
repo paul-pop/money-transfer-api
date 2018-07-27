@@ -34,8 +34,8 @@ public class MoneyTransferAPI {
             .handlers(chain -> chain
                 .all(CORSHandler.class)
                 .path("accounts", new AccountBaseHandler())
-                .path("accounts/:id", new AccountIdHandler())
+                .path("accounts/:id", new AccountHandler())
                 .path("transfers", new TransferBaseHandler())
-                .path("transfers/:id", new TransferIdHandler())));
+                .path("transfers/:id", new TransferHandler())));
     }
 }
