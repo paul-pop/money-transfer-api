@@ -16,3 +16,5 @@ editor
 4. Used the Maven Shade plugin to bundle the app into a single executable JAR
 
 5. I have kept the currency as a String and not a Currency object because I would have had to write a custom JOOQ converter
+
+6. Although not required, I added validation for requests via JSR-303, couldn't leave it without validation :-o

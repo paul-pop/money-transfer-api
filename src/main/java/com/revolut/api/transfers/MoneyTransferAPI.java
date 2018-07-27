@@ -6,9 +6,14 @@ import ratpack.guice.Guice;
 import ratpack.hikari.HikariModule;
 import ratpack.server.RatpackServer;
 
+import javax.validation.Validation;
+
 /**
- * Main entry point of the app, this is where we start the {@link RatpackServer} (embedded Netty server), set up the H2
- * connection and add the path handlers.
+ * Main entry point of the app, this is where we:
+ * - Start the {@link RatpackServer} (embedded Netty server)
+ * - Set up the H2 connection via HikariCP
+ * - Register handlers
+ * - Register validators
  */
 public class MoneyTransferAPI {
 
@@ -20,6 +25,7 @@ public class MoneyTransferAPI {
         RatpackServer.start(server -> server
             .registry(Guice.registry(bindings -> bindings
                 .bindInstance(new CORSHandler())
+                .bindInstance(Validation.buildDefaultValidatorFactory().getValidator())
                 .module(RepositoryModule.class)
                 .module(HikariModule.class, config -> {
                     config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");

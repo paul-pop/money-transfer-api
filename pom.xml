@@ -17,6 +17,8 @@
         <maven.shade.plugin.version>3.1.1</maven.shade.plugin.version>
 
         <h2.db.version>1.4.197</h2.db.version>
+        <hibernate.validator.version>5.3.6.Final</hibernate.validator.version>
+        <javax.el.version>3.0.1-b10</javax.el.version>
         <jooq.version>3.11.3</jooq.version>
         <junit.version>4.12</junit.version>
         <lombok.version>1.16.22</lombok.version>
@@ -54,6 +56,18 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>${javax.el.version}</version>
         </dependency>
 
         <dependency>

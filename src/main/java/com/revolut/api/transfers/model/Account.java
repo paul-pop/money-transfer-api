@@ -6,7 +6,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Getter
@@ -15,9 +18,17 @@ import java.math.BigDecimal;
 @JsonIgnoreProperties(value = {"id"}, allowGetters = true)
 public class Account {
 
+    @NotNull
     private final Long id;
+
+    @NotBlank
     private final String name;
+
+    @NotNull
+    @Min(0)
     private final BigDecimal balance;
+
+    @NotBlank
     private final String currency;
 
     @JsonCreator
@@ -29,6 +40,6 @@ public class Account {
         this.id = id;
         this.name = name;
         this.balance = balance;
-        this.currency = currency;
+        this.currency = "GBP";
     }
 }

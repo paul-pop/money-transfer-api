@@ -9,7 +9,10 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -20,11 +23,23 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(value = {"id", "status", "timestamp"}, allowGetters = true)
 public class Transfer {
 
+    @NotNull
     private final Long id;
+
+    @NotNull
     private final Long sourceAccountId;
+
+    @NotNull
     private final Long destinationAccountId;
+
+    @NotNull
+    @Min(0)
     private final BigDecimal amount;
+
+    @NotBlank
     private final String currency;
+
+    @NotBlank
     private final String reference;
 
     @JsonSerialize(using = ToStringSerializer.class)
@@ -47,7 +62,7 @@ public class Transfer {
         this.sourceAccountId = sourceAccountId;
         this.destinationAccountId = destinationAccountId;
         this.amount = amount;
-        this.currency = currency;
+        this.currency = "GBP";
         this.reference = reference;
         this.status = status;
         this.timestamp = LocalDateTime.now();
