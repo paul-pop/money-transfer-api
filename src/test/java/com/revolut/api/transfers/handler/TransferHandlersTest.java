@@ -30,7 +30,6 @@ public class TransferHandlersTest {
     @Before
     public void setUp() {
         sourceAccount = new Account("Current account", BigDecimal.valueOf(10), Currency.getInstance("GBP"));
-
         destinationAccount = new Account("Savings account", BigDecimal.valueOf(100), Currency.getInstance("GBP"));
 
         transfer = new Transfer(
@@ -45,4 +44,5 @@ public class TransferHandlersTest {
     public void tearDown() {
         underTest.close();
     }
+
 }

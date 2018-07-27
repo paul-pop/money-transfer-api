@@ -3,6 +3,7 @@ package com.revolut.api.transfers.handler;
 import com.revolut.api.transfers.model.Transfer;
 import com.revolut.api.transfers.repository.TransferRepository;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import ratpack.exec.Blocking;
 import ratpack.exec.Promise;
 import ratpack.handling.Context;
 import ratpack.handling.InjectionHandler;
@@ -29,7 +30,7 @@ public class TransferBaseHandler extends InjectionHandler {
                     .map(Jackson::json)
                     .then(ctx::render))
             .post(() -> {
-                // Deserialize de request and validate it
+                // Deserialize the request and validate it
                 Promise<Transfer> transfer = ctx
                     .parse(Jackson.fromJson(Transfer.class))
                     .route(obj -> !validator.validate(obj).isEmpty(),
