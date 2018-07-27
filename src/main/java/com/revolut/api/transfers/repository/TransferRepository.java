@@ -1,6 +1,8 @@
 package com.revolut.api.transfers.repository;
 
 import com.revolut.api.transfers.model.Transfer;
+import com.revolut.api.transfers.model.TransferState;
+import com.revolut.api.transfers.model.TransferStatus;
 import ratpack.exec.Blocking;
 import ratpack.exec.Promise;
 
@@ -49,7 +51,8 @@ public class TransferRepository {
      */
     public Promise<Transfer> create(final Transfer transfer) {
         return Blocking
-            .op(() -> transfers.add(transfer))
+            .op(() -> transfer.setStatus(new TransferStatus(TransferState.PROCESSING, null)))
+            .next(() -> transfers.add(transfer))
             .map(() -> transfer);
     }
 }
