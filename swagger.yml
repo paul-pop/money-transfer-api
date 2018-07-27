@@ -1,0 +1,228 @@
+swagger: '2.0'
+info:
+  description: 'API used to transfer money between accounts'
+  version: '1.0'
+  title: Money Transfer API
+schemes:
+  - http
+host: localhost:5050
+tags:
+  - name: account
+    description: Account operations
+  - name: transfer
+    description: Transfer money operations
+paths:
+  /accounts:
+    get:
+      summary: Retrieve all accounts
+      tags:
+        - account
+      produces:
+        - 'application/json'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ArrayOfAccounts'
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a new account
+      tags:
+        - account
+      produces:
+        - 'application/json'
+      parameters:
+        - in: body
+          name: account
+          description: The properties of the account to create
+          schema:
+            type: object
+            required:
+              - name
+              - balance
+              - currency
+            properties:
+              name:
+                type: string
+                example: "Current Account"
+              balance:
+                type: number
+                example: 0
+                minimum: 0
+              currency:
+                type: string
+                example: "GBP"
+                default: "GBP"
+      responses:
+        '201':
+          description: Account created
+          schema:
+            $ref: '#/definitions/Account'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/BadRequestResponse'
+        '500':
+          description: Internal server error
+  /accounts/{id}:
+    get:
+      summary: Retrieve an account by it's id
+      tags:
+        - account
+      produces:
+        - 'application/json'
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the account
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Account'
+        '404':
+          description: Account not found
+        '500':
+          description: Internal server error
+  /transfers:
+    get:
+      summary: Retrieve all transfers
+      tags:
+        - transfer
+      produces:
+        - 'application/json'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ArrayOfTransfers'
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a new transfer between accounts
+      tags:
+        - transfer
+      produces:
+        - 'application/json'
+      parameters:
+        - in: body
+          name: transfer
+          description: The properties of the transfer to create
+          schema:
+            type: object
+            required:
+              - sourceAccountId
+              - destinationAccountId
+              - amount
+              - currency
+              - reference
+            properties:
+              sourceAccountId:
+                type: integer
+              destinationAccountId:
+                type: integer
+              amount:
+                type: number
+                example: 0
+                minimum: 0
+              currency:
+                type: string
+                example: "GBP"
+                default: "GBP"
+              reference:
+                type: string
+                example: "<3"
+      responses:
+        '201':
+          description: Transfer created
+          schema:
+            $ref: '#/definitions/Transfer'
+        '400':
+          description: Bad requestBadRequestResponse
+        '500':
+          description: Internal server error
+  /transfers/{id}:
+    get:
+      summary: Retrieve a transfer by it's id
+      tags:
+        - transfer
+      produces:
+        - 'application/json'
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the transfer
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Transfer'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/BadRequestResponse'
+        '404':
+          description: Transfer not found
+        '500':
+          description: Internal server error
+definitions:
+  Account:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Identifier of the account
+      name:
+        type: string
+        description: Name of the account
+      balance:
+        type: number
+        description: Balance of the account
+      currency:
+        type: string
+        description: Currency of the account
+  ArrayOfAccounts:
+    type: array
+    items:
+      $ref: '#/definitions/Account'
+    title: Account[]
+  Transfer:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Identifier of the transfer
+      sourceAccountId:
+        type: integer
+        description: Account ID of the source
+      destinationAccountId:
+        type: integer
+        description: Account ID of the destionation
+      amount:
+        type: number
+        description: Amount to transfer
+      currency:
+        type: string
+        description: Currency of the source account
+      reference:
+        type: string
+        description: Transfer reference
+      status:
+        type: string
+        description: Status of the transfer
+  ArrayOfTransfers:
+    type: array
+    items:
+      $ref: '#/definitions/Transfer'
+    title: Transfer[]
+  BadRequestResponse:
+    type: object
+    properties:
+      message:
+        type: string
+        description: A message describing the exact error that occured
