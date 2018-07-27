@@ -22,6 +22,10 @@ public class MoneyTransferAPI {
                     config.addDataSourceProperty("URL", "jdbc:h2:mem:transfers;INIT=RUNSCRIPT FROM 'classpath:/tables.sql'");
                 })))
             .handlers(chain -> chain
-                .all(CORSHandler.class)));
+                .all(CORSHandler.class)
+                .path("accounts", new AccountBaseHandler())
+                .path("accounts/:id", new AccountIdHandler())
+                .path("transfers", new TransferBaseHandler())
+                .path("transfers/:id", new TransferIdHandler())));
     }
 }
