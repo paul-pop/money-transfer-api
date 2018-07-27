@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(value = {"id", "status", "timestamp"}, allowGetters = true)
 public class Transfer {
@@ -26,8 +26,12 @@ public class Transfer {
     private final BigDecimal amount;
     private final String currency;
     private final String reference;
-    private final TransferStatus status;
+
+    @JsonSerialize(using = ToStringSerializer.class)
     private final LocalDateTime timestamp;
+
+    // This will change so can't be immutable
+    private TransferStatus status;
 
     @JsonCreator
     public Transfer(@JsonProperty("id") final Long id,
@@ -46,6 +50,6 @@ public class Transfer {
         this.currency = currency;
         this.reference = reference;
         this.status = status;
-        this.timestamp = timestamp;
+        this.timestamp = LocalDateTime.now();
     }
 }

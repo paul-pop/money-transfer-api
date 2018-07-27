@@ -13,6 +13,10 @@ import ratpack.server.RatpackServer;
 public class MoneyTransferAPI {
 
     public static void main(String[] args) throws Exception {
+        // Default all time to GMT
+        System.setProperty("user.timezone", "GMT");
+
+        // Configure Ratpack server
         RatpackServer.start(server -> server
             .registry(Guice.registry(bindings -> bindings
                 .bindInstance(new CORSHandler())
