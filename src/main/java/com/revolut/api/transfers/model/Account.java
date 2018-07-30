@@ -51,8 +51,9 @@ public class Account {
      *
      * @param amount The amount to substract
      */
-    public void withdraw(BigDecimal amount) {
+    public Account withdraw(BigDecimal amount) {
         this.balance = balance.subtract(amount);
+        return this;
     }
 
     /**
@@ -60,7 +61,8 @@ public class Account {
      *
      * @param amount The amount to add
      */
-    public void deposit(BigDecimal amount) {
+    public Account deposit(BigDecimal amount) {
         this.balance = balance.add(amount);
+        return this;
     }
 }
