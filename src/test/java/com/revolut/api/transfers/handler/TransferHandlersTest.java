@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import static com.revolut.api.transfers.TestConstants.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(JUnit4.class)
@@ -39,6 +40,7 @@ public class TransferHandlersTest {
 
     @Before
     public void setUp() {
+        // Create accounts and persist them
         sourceAccount = new Account(SOURCE_ACCOUNT_NAME, AMOUNT_OF_10, CURRENCY);
         destinationAccount = new Account(DESTINATION_ACCOUNT_NAME, AMOUNT_OF_100, CURRENCY);
 
@@ -207,6 +209,12 @@ public class TransferHandlersTest {
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
         assertThat(parsedResponse.getId(), equalTo(createdTransfer.getId()));
+        assertThat(parsedResponse.getDestinationAccountId(), equalTo(createdTransfer.getDestinationAccountId()));
+        assertThat(parsedResponse.getSourceAccountId(), equalTo(createdTransfer.getSourceAccountId()));
+        assertThat(parsedResponse.getAmount(), equalTo(createdTransfer.getAmount()));
+        assertThat(parsedResponse.getCurrency(), equalTo(createdTransfer.getCurrency()));
+        assertThat(parsedResponse.getReference(), equalTo(createdTransfer.getReference()));
+        assertThat(parsedResponse.getTimestamp(), notNullValue());
         assertThat(parsedResponse.getStatus(), equalTo(TransferStatus.builder()
             .state(TransferState.FAILED)
             .reason("Not enough funds to transfer")
@@ -227,6 +235,12 @@ public class TransferHandlersTest {
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
         assertThat(parsedResponse.getId(), equalTo(createdTransfer.getId()));
+        assertThat(parsedResponse.getDestinationAccountId(), equalTo(createdTransfer.getDestinationAccountId()));
+        assertThat(parsedResponse.getSourceAccountId(), equalTo(createdTransfer.getSourceAccountId()));
+        assertThat(parsedResponse.getAmount(), equalTo(createdTransfer.getAmount()));
+        assertThat(parsedResponse.getCurrency(), equalTo(createdTransfer.getCurrency()));
+        assertThat(parsedResponse.getReference(), equalTo(createdTransfer.getReference()));
+        assertThat(parsedResponse.getTimestamp(), notNullValue());
         assertThat(parsedResponse.getStatus(), equalTo(TransferStatus.builder()
             .state(TransferState.COMPLETED)
             .reason("All good 👍")
@@ -249,6 +263,12 @@ public class TransferHandlersTest {
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
         assertThat(parsedResponse.getId(), equalTo(createdTransfer.getId()));
+        assertThat(parsedResponse.getDestinationAccountId(), equalTo(createdTransfer.getDestinationAccountId()));
+        assertThat(parsedResponse.getSourceAccountId(), equalTo(createdTransfer.getSourceAccountId()));
+        assertThat(parsedResponse.getAmount(), equalTo(createdTransfer.getAmount()));
+        assertThat(parsedResponse.getCurrency(), equalTo(createdTransfer.getCurrency()));
+        assertThat(parsedResponse.getReference(), equalTo(createdTransfer.getReference()));
+        assertThat(parsedResponse.getTimestamp(), notNullValue());
         assertThat(parsedResponse.getStatus(), equalTo(TransferStatus.builder()
             .state(TransferState.COMPLETED)
             .reason("All good 👍")
