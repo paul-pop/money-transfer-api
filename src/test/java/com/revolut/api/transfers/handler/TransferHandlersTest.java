@@ -1,5 +1,6 @@
 package com.revolut.api.transfers.handler;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revolut.api.transfers.MoneyTransferAPI;
 import com.revolut.api.transfers.model.Account;
@@ -18,6 +19,7 @@ import ratpack.test.http.TestHttpClient;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
 import static com.revolut.api.transfers.TestConstants.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
@@ -258,6 +260,30 @@ public class TransferHandlersTest {
         ));
 
         assertAccountBalances(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(0.01), BigDecimal.valueOf(109.99));
+    }
+
+    @Test
+    public void givenSourceHasSufficientFunds_returnsCompletedTransferList() throws IOException {
+        ReceivedResponse createdTransferResponse = createTransfer(
+            new Transfer(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(0.01), CURRENCY, REFERENCE));
+
+        assertThat(createdTransferResponse.getStatusCode(), equalTo(CREATED.code()));
+
+        Transfer createdTransfer = objectMapper.readValue(createdTransferResponse.getBody().getText(), Transfer.class);
+        ReceivedResponse response = testHttpClient.get(PATH);
+        List<Transfer> parsedResponse = objectMapper.readValue(response.getBody().getText(), new TypeReference<List<Transfer>>() {
+        });
+
+        assertThat(response.getStatusCode(), equalTo(OK.code()));
+        assertThat(parsedResponse.size(), equalTo(1));
+        assertTransfers(parsedResponse.get(0), createdTransfer);
+        assertThat(parsedResponse.get(0).getStatus(), equalTo(TransferStatus.builder()
+            .state(TransferState.COMPLETED)
+            .reason("All good 👍")
+            .build()
+        ));
+
+        assertAccountBalances(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(9.99), BigDecimal.valueOf(100.01));
     }
 
     /**
