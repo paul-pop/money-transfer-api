@@ -32,11 +32,13 @@ public class AccountHandlersTest {
     private final TestHttpClient testHttpClient = underTest.getHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private Account account;
+    private Account account1;
+    private Account account2;
 
     @Before
     public void setUp() {
-        account = new Account("Current account", BigDecimal.valueOf(0), Currency.getInstance("GBP"));
+        account1 = new Account("Current account", BigDecimal.valueOf(0), Currency.getInstance("GBP"));
+        account2 = new Account("Savings account", BigDecimal.valueOf(10), Currency.getInstance("GBP"));
     }
 
     @After
@@ -118,7 +120,7 @@ public class AccountHandlersTest {
         ReceivedResponse createdAccountResponse = testHttpClient.request(PATH, request -> request
             .body(body -> body
                 .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(account)))
+                .text(objectMapper.writeValueAsString(account1)))
             .post());
 
         assertThat(createdAccountResponse.getStatusCode(), equalTo(CREATED.code()));
@@ -138,12 +140,12 @@ public class AccountHandlersTest {
         ReceivedResponse createdAccountResponse1 = testHttpClient.request(PATH, request -> request
             .body(body -> body
                 .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(account)))
+                .text(objectMapper.writeValueAsString(account1)))
             .post());
         ReceivedResponse createdAccountResponse2 = testHttpClient.request(PATH, request -> request
             .body(body -> body
                 .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(account)))
+                .text(objectMapper.writeValueAsString(account2)))
             .post());
 
         assertThat(createdAccountResponse1.getStatusCode(), equalTo(CREATED.code()));
@@ -166,7 +168,7 @@ public class AccountHandlersTest {
         ReceivedResponse createdAccountResponse = testHttpClient.request(PATH, request -> request
             .body(body -> body
                 .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(account)))
+                .text(objectMapper.writeValueAsString(account1)))
             .post());
 
         assertThat(createdAccountResponse.getStatusCode(), equalTo(CREATED.code()));

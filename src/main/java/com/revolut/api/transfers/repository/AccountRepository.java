@@ -4,17 +4,18 @@ import com.revolut.api.transfers.model.Account;
 import ratpack.exec.Blocking;
 import ratpack.exec.Promise;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 /**
  * Holds methods for querying/mutating the account repository
  */
 public class AccountRepository {
 
-    private final List<Account> accounts;
+    private final Map<Long, Account> accounts;
 
-    public AccountRepository(final List<Account> accounts) {
+    public AccountRepository(final Map<Long, Account> accounts) {
         this.accounts = accounts;
     }
 
@@ -24,7 +25,7 @@ public class AccountRepository {
      * @return promise with the list of all accounts
      */
     public Promise<List<Account>> getAll() {
-        return Blocking.get(() -> accounts);
+        return Blocking.get(() -> new ArrayList<>(accounts.values()));
     }
 
     /**
@@ -33,12 +34,8 @@ public class AccountRepository {
      * @param id the identifier to query by
      * @return promise with the account
      */
-    public Promise<Account> getById(final Long id) {
-        Optional<Account> first = accounts.stream()
-            .filter(account -> id.equals(account.getId()))
-            .findFirst();
-
-        return first.isPresent() ? Blocking.get(first::get) : Blocking.get(() -> null);
+    public Promise<Account> getById(final long id) {
+        return Blocking.get(() -> accounts.get(id));
     }
 
     /**
@@ -49,7 +46,7 @@ public class AccountRepository {
      */
     public Promise<Account> create(final Account account) {
         return Blocking
-            .op(() -> accounts.add(account))
+            .op(() -> accounts.put(account.getId(), account))
             .map(() -> account);
     }
 }
