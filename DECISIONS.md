@@ -3,7 +3,7 @@
 There are some decisions I made as I went along that I wanted to keep track of here:
 
 1. Wanted to use DropWizard because I have used it before but decided to try something I've never done before instead
-so I ended up with Ratpack - it uses an event-based non-blocking HTTP engine.
+so I ended up with Ratpack (PS: Would appreciate feedback on what can be done better as it's my first time using it.)
 
 2. Wanted to use H2 as an in-memory database with JOOQ to generate the models but based on my experience there's so many issues
 with type conversion that for simplicity I have just used data structures.

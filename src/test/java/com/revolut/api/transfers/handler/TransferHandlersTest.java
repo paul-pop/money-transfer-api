@@ -35,7 +35,7 @@ public class TransferHandlersTest {
         transfer = new Transfer(
             sourceAccount.getId(),
             destinationAccount.getId(),
-            BigDecimal.valueOf(9.99),
+            BigDecimal.valueOf(10),
             Currency.getInstance("GBP"),
             "<3");
     }

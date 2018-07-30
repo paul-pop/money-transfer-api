@@ -2,6 +2,7 @@ package com.revolut.api.transfers.handler;
 
 import com.revolut.api.transfers.model.Transfer;
 import com.revolut.api.transfers.repository.TransferRepository;
+import com.revolut.api.transfers.service.TransferService;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import ratpack.exec.Promise;
 import ratpack.handling.Context;
@@ -20,7 +21,7 @@ import javax.validation.Validator;
  */
 public class TransferBaseHandler extends InjectionHandler {
 
-    public void handle(Context ctx, TransferRepository repository) throws Exception {
+    public void handle(Context ctx, TransferRepository repository, TransferService service) throws Exception {
         Validator validator = ctx.get(Validator.class);
 
         ctx.byMethod(method -> method
@@ -35,8 +36,9 @@ public class TransferBaseHandler extends InjectionHandler {
                     .route(obj -> !validator.validate(obj).isEmpty(),
                         obj -> ctx.clientError(HttpResponseStatus.BAD_REQUEST.code()));
 
-                // Save to the repository and return the response
+                // Perform the transfer, save the result to the repository and return the response
                 transfer
+                    .flatMap(service::transfer)
                     .flatMap(repository::create)
                     .map(Jackson::json)
                     .then(ctx::render);
