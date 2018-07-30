@@ -15,10 +15,9 @@ import ratpack.test.MainClassApplicationUnderTest;
 import ratpack.test.http.TestHttpClient;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.List;
 
+import static com.revolut.api.transfers.TestConstants.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,8 +36,8 @@ public class AccountHandlersTest {
 
     @Before
     public void setUp() {
-        account1 = new Account("Current account", BigDecimal.valueOf(0), Currency.getInstance("GBP"));
-        account2 = new Account("Savings account", BigDecimal.valueOf(10), Currency.getInstance("GBP"));
+        account1 = new Account(SOURCE_ACCOUNT_NAME, AMOUNT_OF_0, CURRENCY);
+        account2 = new Account(DESTINATION_ACCOUNT_NAME, AMOUNT_OF_10, CURRENCY);
     }
 
     @After
@@ -51,77 +50,55 @@ public class AccountHandlersTest {
         ReceivedResponse response = testHttpClient.get(PATH);
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
-        assertThat(response.getBody().getText(), equalTo("[]"));
+        assertThat(response.getBody().getText(), equalTo(EMPTY_JSON_LIST));
     }
 
     @Test
     public void givenNoId_returnsAllAccounts() {
-        ReceivedResponse response = testHttpClient.get(PATH + "/");
+        ReceivedResponse response = testHttpClient.get(PATH + PATH_SEPARATOR);
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
-        assertThat(response.getBody().getText(), equalTo("[]"));
+        assertThat(response.getBody().getText(), equalTo(EMPTY_JSON_LIST));
     }
 
     @Test
     public void givenInvalidId_returns404() {
-        ReceivedResponse response = testHttpClient.get(PATH + "/invalid");
+        ReceivedResponse response = testHttpClient.get(PATH + PATH_SEPARATOR + INVALID_ACCOUNT_ID);
 
         assertThat(response.getStatusCode(), equalTo(NOT_FOUND.code()));
     }
 
     @Test
     public void givenNonExistingId_returns404() {
-        ReceivedResponse response = testHttpClient.get(PATH + "/34823473294732894");
+        ReceivedResponse response = testHttpClient.get(PATH + PATH_SEPARATOR + NON_EXISTENT_ACCOUNT_ID);
 
         assertThat(response.getStatusCode(), equalTo(NOT_FOUND.code()));
     }
 
     @Test
     public void givenAccountWithEmptyName_returns400() {
-        ReceivedResponse response = testHttpClient.request(PATH, request -> request
-            .body(body -> body
-                .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(
-                    new Account("", BigDecimal.valueOf(1), Currency.getInstance("GBP"))
-                )))
-            .post());
+        ReceivedResponse response = createAccount(new Account("", AMOUNT_OF_10, CURRENCY));
 
         assertThat(response.getStatusCode(), equalTo(BAD_REQUEST.code()));
     }
 
     @Test
     public void givenAccountWithNegativeBalance_returns400() {
-        ReceivedResponse response = testHttpClient.request(PATH, request -> request
-            .body(body -> body
-                .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(
-                    new Account("Current account", BigDecimal.valueOf(-1), Currency.getInstance("GBP"))
-                )))
-            .post());
+        ReceivedResponse response = createAccount(new Account(SOURCE_ACCOUNT_NAME, NEGATIVE_AMOUNT, CURRENCY));
 
         assertThat(response.getStatusCode(), equalTo(BAD_REQUEST.code()));
     }
 
     @Test
     public void givenAccountWithNoCurrency_returns400() {
-        ReceivedResponse response = testHttpClient.request(PATH, request -> request
-            .body(body -> body
-                .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(
-                    new Account("Current account", BigDecimal.valueOf(1), null)
-                )))
-            .post());
+        ReceivedResponse response = createAccount(new Account(SOURCE_ACCOUNT_NAME, AMOUNT_OF_10, null));
 
         assertThat(response.getStatusCode(), equalTo(BAD_REQUEST.code()));
     }
 
     @Test
     public void givenSingleAccount_returnsListWithOneAccount() throws IOException {
-        ReceivedResponse createdAccountResponse = testHttpClient.request(PATH, request -> request
-            .body(body -> body
-                .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(account1)))
-            .post());
+        ReceivedResponse createdAccountResponse = createAccount(account1);
 
         assertThat(createdAccountResponse.getStatusCode(), equalTo(CREATED.code()));
 
@@ -137,16 +114,8 @@ public class AccountHandlersTest {
 
     @Test
     public void givenMultipleAccounts_returnsListWithMultipleAccount() throws IOException {
-        ReceivedResponse createdAccountResponse1 = testHttpClient.request(PATH, request -> request
-            .body(body -> body
-                .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(account1)))
-            .post());
-        ReceivedResponse createdAccountResponse2 = testHttpClient.request(PATH, request -> request
-            .body(body -> body
-                .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(account2)))
-            .post());
+        ReceivedResponse createdAccountResponse1 = createAccount(account1);
+        ReceivedResponse createdAccountResponse2 = createAccount(account2);
 
         assertThat(createdAccountResponse1.getStatusCode(), equalTo(CREATED.code()));
         assertThat(createdAccountResponse2.getStatusCode(), equalTo(CREATED.code()));
@@ -165,19 +134,26 @@ public class AccountHandlersTest {
 
     @Test
     public void givenSingleAccount_returnsSingleAccount() throws IOException {
-        ReceivedResponse createdAccountResponse = testHttpClient.request(PATH, request -> request
-            .body(body -> body
-                .type(MediaType.APPLICATION_JSON)
-                .text(objectMapper.writeValueAsString(account1)))
-            .post());
+        ReceivedResponse createdAccountResponse = createAccount(account1);
 
         assertThat(createdAccountResponse.getStatusCode(), equalTo(CREATED.code()));
 
         Account createdAccount = objectMapper.readValue(createdAccountResponse.getBody().getText(), Account.class);
-        ReceivedResponse response = testHttpClient.get(PATH + "/" + createdAccount.getId());
+        ReceivedResponse response = testHttpClient.get(PATH + PATH_SEPARATOR + createdAccount.getId());
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
         assertThat(response.getBody().getText(), equalTo(createdAccountResponse.getBody().getText()));
+    }
+
+    /**
+     * Utility method used to create a given {@link Account}
+     */
+    private ReceivedResponse createAccount(Account account) {
+        return testHttpClient.request(PATH, request -> request
+            .body(body -> body
+                .type(MediaType.APPLICATION_JSON)
+                .text(objectMapper.writeValueAsString(account)))
+            .post());
     }
 
 }
