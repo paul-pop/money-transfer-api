@@ -128,7 +128,7 @@ public class TransferHandlersTest {
         Transfer parsedResponse = objectMapper.readValue(response.getBody().getText(), Transfer.class);
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
-        assertThat(parsedResponse.getId(), equalTo(createdTransfer.getId()));
+        assertTransfers(parsedResponse, createdTransfer);
         assertThat(parsedResponse.getStatus(), equalTo(TransferStatus.builder()
             .state(TransferState.FAILED)
             .reason("Transfer amount must be greater than 0")
@@ -148,7 +148,7 @@ public class TransferHandlersTest {
         Transfer parsedResponse = objectMapper.readValue(response.getBody().getText(), Transfer.class);
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
-        assertThat(parsedResponse.getId(), equalTo(createdTransfer.getId()));
+        assertTransfers(parsedResponse, createdTransfer);
         assertThat(parsedResponse.getStatus(), equalTo(TransferStatus.builder()
             .state(TransferState.FAILED)
             .reason("Account does not exist")
@@ -168,7 +168,7 @@ public class TransferHandlersTest {
         Transfer parsedResponse = objectMapper.readValue(response.getBody().getText(), Transfer.class);
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
-        assertThat(parsedResponse.getId(), equalTo(createdTransfer.getId()));
+        assertTransfers(parsedResponse, createdTransfer);
         assertThat(parsedResponse.getStatus(), equalTo(TransferStatus.builder()
             .state(TransferState.FAILED)
             .reason("Account does not exist")
@@ -188,7 +188,7 @@ public class TransferHandlersTest {
         Transfer parsedResponse = objectMapper.readValue(response.getBody().getText(), Transfer.class);
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
-        assertThat(parsedResponse.getId(), equalTo(createdTransfer.getId()));
+        assertTransfers(parsedResponse, createdTransfer);
         assertThat(parsedResponse.getStatus(), equalTo(TransferStatus.builder()
             .state(TransferState.FAILED)
             .reason("The transfer must be between two different accounts")
@@ -208,13 +208,7 @@ public class TransferHandlersTest {
         Transfer parsedResponse = objectMapper.readValue(response.getBody().getText(), Transfer.class);
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
-        assertThat(parsedResponse.getId(), equalTo(createdTransfer.getId()));
-        assertThat(parsedResponse.getDestinationAccountId(), equalTo(createdTransfer.getDestinationAccountId()));
-        assertThat(parsedResponse.getSourceAccountId(), equalTo(createdTransfer.getSourceAccountId()));
-        assertThat(parsedResponse.getAmount(), equalTo(createdTransfer.getAmount()));
-        assertThat(parsedResponse.getCurrency(), equalTo(createdTransfer.getCurrency()));
-        assertThat(parsedResponse.getReference(), equalTo(createdTransfer.getReference()));
-        assertThat(parsedResponse.getTimestamp(), notNullValue());
+        assertTransfers(parsedResponse, createdTransfer);
         assertThat(parsedResponse.getStatus(), equalTo(TransferStatus.builder()
             .state(TransferState.FAILED)
             .reason("Not enough funds to transfer")
@@ -234,13 +228,7 @@ public class TransferHandlersTest {
         Transfer parsedResponse = objectMapper.readValue(response.getBody().getText(), Transfer.class);
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
-        assertThat(parsedResponse.getId(), equalTo(createdTransfer.getId()));
-        assertThat(parsedResponse.getDestinationAccountId(), equalTo(createdTransfer.getDestinationAccountId()));
-        assertThat(parsedResponse.getSourceAccountId(), equalTo(createdTransfer.getSourceAccountId()));
-        assertThat(parsedResponse.getAmount(), equalTo(createdTransfer.getAmount()));
-        assertThat(parsedResponse.getCurrency(), equalTo(createdTransfer.getCurrency()));
-        assertThat(parsedResponse.getReference(), equalTo(createdTransfer.getReference()));
-        assertThat(parsedResponse.getTimestamp(), notNullValue());
+        assertTransfers(parsedResponse, createdTransfer);
         assertThat(parsedResponse.getStatus(), equalTo(TransferStatus.builder()
             .state(TransferState.COMPLETED)
             .reason("All good 👍")
@@ -262,13 +250,7 @@ public class TransferHandlersTest {
         Transfer parsedResponse = objectMapper.readValue(response.getBody().getText(), Transfer.class);
 
         assertThat(response.getStatusCode(), equalTo(OK.code()));
-        assertThat(parsedResponse.getId(), equalTo(createdTransfer.getId()));
-        assertThat(parsedResponse.getDestinationAccountId(), equalTo(createdTransfer.getDestinationAccountId()));
-        assertThat(parsedResponse.getSourceAccountId(), equalTo(createdTransfer.getSourceAccountId()));
-        assertThat(parsedResponse.getAmount(), equalTo(createdTransfer.getAmount()));
-        assertThat(parsedResponse.getCurrency(), equalTo(createdTransfer.getCurrency()));
-        assertThat(parsedResponse.getReference(), equalTo(createdTransfer.getReference()));
-        assertThat(parsedResponse.getTimestamp(), notNullValue());
+        assertTransfers(parsedResponse, createdTransfer);
         assertThat(parsedResponse.getStatus(), equalTo(TransferStatus.builder()
             .state(TransferState.COMPLETED)
             .reason("All good 👍")
@@ -309,6 +291,22 @@ public class TransferHandlersTest {
         assertThat(parsedSourceAccountResponse.getBalance(), equalTo(sourceAccountBalance));
         assertThat(parsedDestinationAccountResponse.getId(), equalTo(destinationAccountId));
         assertThat(parsedDestinationAccountResponse.getBalance(), equalTo(destinationAccountBalance));
+    }
+
+    /**
+     * Utility method that asserts the transfers have been updated correctly
+     *
+     * @param actual   response transfer
+     * @param expected request transfer
+     */
+    private void assertTransfers(Transfer actual, Transfer expected) {
+        assertThat(actual.getId(), equalTo(expected.getId()));
+        assertThat(actual.getDestinationAccountId(), equalTo(expected.getDestinationAccountId()));
+        assertThat(actual.getSourceAccountId(), equalTo(expected.getSourceAccountId()));
+        assertThat(actual.getAmount(), equalTo(expected.getAmount()));
+        assertThat(actual.getCurrency(), equalTo(expected.getCurrency()));
+        assertThat(actual.getReference(), equalTo(expected.getReference()));
+        assertThat(actual.getTimestamp(), notNullValue());
     }
 
 }
