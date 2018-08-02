@@ -46,7 +46,7 @@ public class AccountRepository {
      */
     public Promise<Account> create(final Account account) {
         return Blocking
-            .op(() -> accounts.put(account.getId(), account))
+            .op(() -> accounts.putIfAbsent(account.getId(), account))
             .map(() -> account);
     }
 }

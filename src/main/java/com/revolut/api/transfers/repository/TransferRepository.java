@@ -46,7 +46,7 @@ public class TransferRepository {
      */
     public Promise<Transfer> create(final Transfer transfer) {
         return Blocking
-            .op(() -> transfers.put(transfer.getId(), transfer))
+            .op(() -> transfers.putIfAbsent(transfer.getId(), transfer))
             .map(() -> transfer);
     }
 }
