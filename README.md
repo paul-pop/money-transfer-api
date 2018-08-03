@@ -7,7 +7,9 @@ REST API used to transfer a given amount of money between two accounts (only sup
 Written in Java 8 and [Ratpack](https://ratpack.io) with:
 - Lombok for awesomeness
 - Uses JUnit and Ratpack Test for testing
+- Uses ConcurrentUnit for concurrency tests via JUnit
 - Uses basic in-memory data structures for persistence
+- Uses Hibernate validator for JSR-303 validations on requests
 
 ## Build
 
