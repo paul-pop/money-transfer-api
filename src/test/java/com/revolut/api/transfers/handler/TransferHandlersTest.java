@@ -316,7 +316,40 @@ public class TransferHandlersTest extends ConcurrentTestCase {
 
         await(3, TimeUnit.SECONDS);
 
+        // Source account will have 4.99 balance after both transfers succeed and destination account will have 105.01 balance
         assertAccountBalances(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(4.99), BigDecimal.valueOf(105.01));
+    }
+
+    @Test
+    public void givenMultipleTransfersInParallel_oneFailsBecauseOfInsufficientFunds() throws Exception {
+        new Thread(() -> {
+            ReceivedResponse createdTransferResponse = createTransfer(
+                new Transfer(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(5), CURRENCY, REFERENCE));
+            assertThat(createdTransferResponse.getStatusCode(), equalTo(CREATED.code()));
+
+            resume();
+        }).start();
+
+        new Thread(() -> {
+            ReceivedResponse createdTransferResponse = createTransfer(
+                new Transfer(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(5), CURRENCY, REFERENCE));
+            assertThat(createdTransferResponse.getStatusCode(), equalTo(CREATED.code()));
+
+            resume();
+        }).start();
+
+        new Thread(() -> {
+            ReceivedResponse createdTransferResponse = createTransfer(
+                new Transfer(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(5), CURRENCY, REFERENCE));
+            assertThat(createdTransferResponse.getStatusCode(), equalTo(CREATED.code()));
+
+            resume();
+        }).start();
+
+        await(3, TimeUnit.SECONDS);
+
+        // Seeing one transfer should fail, the source account will have 0 balance and the destination account 110
+        assertAccountBalances(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(0), BigDecimal.valueOf(110));
     }
 
     /**
