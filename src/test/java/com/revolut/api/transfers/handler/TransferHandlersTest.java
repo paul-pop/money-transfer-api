@@ -7,6 +7,7 @@ import com.revolut.api.transfers.model.Account;
 import com.revolut.api.transfers.model.Transfer;
 import com.revolut.api.transfers.model.TransferState;
 import com.revolut.api.transfers.model.TransferStatus;
+import net.jodah.concurrentunit.ConcurrentTestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import ratpack.test.http.TestHttpClient;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.revolut.api.transfers.TestConstants.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
@@ -28,7 +30,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(JUnit4.class)
-public class TransferHandlersTest {
+public class TransferHandlersTest extends ConcurrentTestCase {
 
     private static final String PATH = "/transfers";
     private static final String ACCOUNTS_PATH = "/accounts";
@@ -284,6 +286,37 @@ public class TransferHandlersTest {
         ));
 
         assertAccountBalances(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(9.99), BigDecimal.valueOf(100.01));
+    }
+
+    @Test
+    public void givenMultipleTransfersInParallel_returnsCompletedAndValidTransfer() throws Exception {
+        new Thread(() -> {
+            ReceivedResponse createdTransferResponse = createTransfer(
+                new Transfer(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(1.99), CURRENCY, REFERENCE));
+            assertThat(createdTransferResponse.getStatusCode(), equalTo(CREATED.code()));
+
+            resume();
+        }).start();
+
+        new Thread(() -> {
+            ReceivedResponse createdTransferResponse = createTransfer(
+                new Transfer(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(2.99), CURRENCY, REFERENCE));
+            assertThat(createdTransferResponse.getStatusCode(), equalTo(CREATED.code()));
+
+            resume();
+        }).start();
+
+        new Thread(() -> {
+            ReceivedResponse createdTransferResponse = createTransfer(
+                new Transfer(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(0.03), CURRENCY, REFERENCE));
+            assertThat(createdTransferResponse.getStatusCode(), equalTo(CREATED.code()));
+
+            resume();
+        }).start();
+
+        await(3, TimeUnit.SECONDS);
+
+        assertAccountBalances(sourceAccount.getId(), destinationAccount.getId(), BigDecimal.valueOf(4.99), BigDecimal.valueOf(105.01));
     }
 
     /**

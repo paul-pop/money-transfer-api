@@ -47,22 +47,27 @@ public class Account {
     }
 
     /**
-     * Substracts the given {@link BigDecimal} from the balance
+     * Substracts the given {@link BigDecimal} from the balance and returns {@code true} if enough funds are available
+     * and the withdraw succeeded, throws {@link IllegalArgumentException} otherwise.
      *
      * @param amount The amount to substract
      */
-    public Account withdraw(BigDecimal amount) {
+    public synchronized boolean withdraw(BigDecimal amount) {
+        if (this.balance.compareTo(amount) < 0) {
+            throw new IllegalArgumentException("Not enough funds to transfer");
+        }
+
         this.balance = balance.subtract(amount);
-        return this;
+        return true;
     }
 
     /**
-     * Adds the given {@link BigDecimal} to the balance
+     * Adds the given {@link BigDecimal} to the balance, returns {@code true} when successful.
      *
      * @param amount The amount to add
      */
-    public Account deposit(BigDecimal amount) {
+    public synchronized boolean deposit(BigDecimal amount) {
         this.balance = balance.add(amount);
-        return this;
+        return true;
     }
 }

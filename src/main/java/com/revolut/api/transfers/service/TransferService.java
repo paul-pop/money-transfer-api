@@ -50,12 +50,8 @@ public class TransferService {
                 if (sourceAccount.equals(destinationAccount)) {
                     throw new IllegalArgumentException("The transfer must be between two different accounts");
                 }
-                if (sourceAccount.getBalance().compareTo(transferAmount) < 0) {
-                    throw new IllegalArgumentException("Not enough funds to transfer");
-                }
 
-                sourceAccount.withdraw(transferAmount);
-                destinationAccount.deposit(transferAmount);
+                transfer(sourceAccount, destinationAccount, transferAmount);
 
                 return completed(transfer);
             })
@@ -67,6 +63,30 @@ public class TransferService {
                 logger.error("Server exception occurred during transfer", ex);
                 return failed(transfer, "Something terribly wrong happened on the server");
             });
+    }
+
+    /**
+     * Used to transfer a given amount between two accounts in an atomic ways and rolls back if necessary.
+     *
+     * @param sourceAccount      account to transfer from
+     * @param destinationAccount account to transfer to
+     * @param transferAmount     amount to transfer
+     */
+    private void transfer(Account sourceAccount, Account destinationAccount, BigDecimal transferAmount) {
+        boolean withdrawn = false;
+        boolean deposited = false;
+        try {
+            if (sourceAccount.withdraw(transferAmount)) {
+                withdrawn = true;
+                if (destinationAccount.deposit(transferAmount)) {
+                    deposited = true;
+                }
+            }
+        } finally {
+            if (withdrawn && !deposited) {
+                sourceAccount.deposit(transferAmount);
+            }
+        }
     }
 
     /**

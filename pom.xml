@@ -16,6 +16,7 @@
         <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
         <maven.shade.plugin.version>3.1.1</maven.shade.plugin.version>
 
+        <concurrentunit.version>0.4.3</concurrentunit.version>
         <hibernate.validator.version>6.0.11.Final</hibernate.validator.version>
         <javax.el.version>3.0.1-b10</javax.el.version>
         <junit.version>4.12</junit.version>
@@ -67,6 +68,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>concurrentunit</artifactId>
+            <version>${concurrentunit.version}</version>
             <scope>test</scope>
         </dependency>
 
