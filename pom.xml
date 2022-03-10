@@ -21,7 +21,7 @@
         <javax.el.version>3.0.1-b10</javax.el.version>
         <junit.version>4.12</junit.version>
         <lombok.version>1.16.22</lombok.version>
-        <ratpack.version>1.7.5</ratpack.version>
+        <ratpack.version>1.8.1</ratpack.version>
         <slf4j.version>1.7.25</slf4j.version>
     </properties>
 
